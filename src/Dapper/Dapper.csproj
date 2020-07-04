@@ -6,4 +6,11 @@
     <RootNamespace>Fulgoribus.Luxae.Dapper</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.35" />
+    <PackageReference Include="Lamar" Version="4.3.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="3.1.5" />
+  </ItemGroup>
+
 </Project>
