@@ -1,4 +1,5 @@
-using Fulgoribus.Luxae.Dapper.Identity;
+using System;
+using Lamar;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -18,11 +19,19 @@ namespace Fulgoribus.Luxae.Web
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureContainer(ServiceRegistry services)
         {
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddUserStore<DapperUserStore>();
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true);
             services.AddRazorPages();
+
+            // Load our custom services *after* Microsoft's so they win.
+            services.Scan(s =>
+            {
+                // Look for any registry in a DLL we built.
+                s.AssembliesFromApplicationBaseDirectory(f => f?.FullName?.StartsWith("Fulgoribus.", StringComparison.OrdinalIgnoreCase) ?? false);
+
+                s.LookForRegistries();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

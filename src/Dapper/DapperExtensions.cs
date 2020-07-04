@@ -41,7 +41,7 @@ namespace Fulgoribus.Luxae.Dapper
                             catch (Exception rex)
                             {
                                 // We failed to roll back. Return both of these.
-                                throw new AggregateException("An error occurred during rollback.", ex, rex);
+                                throw new AggregateException("An error occurred during both execution and rollback.", ex, rex);
                             }
 
                             // We rolled back successfully. Let the original exception bubble up.
@@ -93,7 +93,7 @@ namespace Fulgoribus.Luxae.Dapper
                             catch (Exception rex)
                             {
                                 // We failed to roll back. Return both of these.
-                                throw new AggregateException("An error occurred during rollback.", ex, rex);
+                                throw new AggregateException("An error occurred during both execution and rollback.", ex, rex);
                             }
 
                             // We rolled back successfully. Let the original exception bubble up.
