@@ -52,7 +52,8 @@ jobs:
       if: ${{ github.event_name != 'pull_request' }}
       shell: pwsh
       run: |
-        $body = @{ ref = "${{ github.ref }}" } | ConvertTo-Json 
+        $body = @{ ref = "${{ github.ref }}" }
+        If ("${{ github.ref }}" -ne "master") { $body.required_contexts = @() }
         Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/deployments" `
         -ContentType "application/vnd.github.v3+json" -Authentication Bearer -Token (ConvertTo-SecureString "${{ secrets.TOKEN_DEPLOYMENT }}" -AsPlainText -Force) `
-        -Method POST -Body $body
+        -Method POST -Body ($body | ConvertTo-Json)
