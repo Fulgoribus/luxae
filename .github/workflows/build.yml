@@ -48,3 +48,10 @@ jobs:
         name: web
         # A file, directory or wildcard pattern that describes what to upload
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/web
+    - name: Create deployment
+      if: ${{ github.event_name != 'pull_request' }}
+      shell: pwsh
+      run: |
+        Invoke-WebRequest -Uri "https://api.github.com/repos/${{ github.repository }}/deployments" `
+        -ContentType "application/json" -Authentication Bearer -Token ${{ secrets.TOKEN_DEPLOYMENT }} `
+        -Method POST -Body @{ ref = "${{ github.ref }}" }
