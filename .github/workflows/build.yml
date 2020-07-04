@@ -26,14 +26,25 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
-    - name: Publish
+    - name: Publish DbUp
       if: ${{ github.event_name != 'pull_request' }}
-      run: dotnet publish --configuration Release --no-build --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-    - name: Upload a Build Artifact
+      run: dotnet publish src/DbUp/DbUp.csproj --configuration Release --no-build --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/dbup
+    - name: Publish Web
+      if: ${{ github.event_name != 'pull_request' }}
+      run: dotnet publish src/Web/Web.csproj --configuration Release --no-build --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/web
+    - name: Upload DbUp Build Artifact
       if: ${{ github.event_name != 'pull_request' }}
       uses: actions/upload-artifact@v2
       with:
         # Artifact name
-        name: drop
+        name: dbup
         # A file, directory or wildcard pattern that describes what to upload
-        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/dbup
+    - name: Upload Web Build Artifact
+      if: ${{ github.event_name != 'pull_request' }}
+      uses: actions/upload-artifact@v2
+      with:
+        # Artifact name
+        name: web
+        # A file, directory or wildcard pattern that describes what to upload
+        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/web
