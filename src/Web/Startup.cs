@@ -1,8 +1,10 @@
 using System;
+using System.Data;
 using Lamar;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,6 +27,12 @@ namespace Fulgoribus.Luxae.Web
             services.AddRazorPages();
 
             // Load our custom services *after* Microsoft's so they win.
+            // Need to use a lamba to resolve the SqlConnection because trying to bind by type was going off into setter injection land.
+            services.For<IDbConnection>().Use(ctx =>
+            {
+                var config = ctx.GetInstance<IConfiguration>();
+                return new SqlConnection(config.GetConnectionString("DefaultConnection"));
+            }).Scoped();
             services.Scan(s =>
             {
                 // Look for any registry in a DLL we built.

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 
 namespace Fulgoribus.Luxae.Dapper.Identity
 {
@@ -17,7 +16,7 @@ namespace Fulgoribus.Luxae.Dapper.Identity
     /// </remarks>
     public sealed class DapperUserStore : DapperUserStore<IdentityUser, string>
     {
-        public DapperUserStore(IConfiguration configuration) : base(configuration)
+        public DapperUserStore(IDbConnection db) : base(db)
         {
         }
     }
@@ -34,7 +33,7 @@ namespace Fulgoribus.Luxae.Dapper.Identity
         private const string AuthenticatorKeyTokenName = "AuthenticatorKey";
         private const string RecoveryCodeTokenName = "RecoveryCodes";
 
-        private readonly SqlConnection db;
+        private readonly IDbConnection db;
 
         // Mimic the behavior of the private DbSet instances in UserStore. These should probably be persisted as part of the IdentityUser class,
         // but haven't investigated the framework code to make sure it gets persisted.
@@ -48,9 +47,9 @@ namespace Fulgoribus.Luxae.Dapper.Identity
         private readonly List<IdentityUserToken<TKey>> updateIdentityUserTokens = new List<IdentityUserToken<TKey>>();
         private bool disposedValue;
 
-        public DapperUserStore(IConfiguration configuration)
+        public DapperUserStore(IDbConnection db)
         {
-            db = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
+            this.db = db;
         }
 
         public Task AddClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
