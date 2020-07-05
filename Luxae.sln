@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper", "src\Dapper\Dapper
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleUtilities", "src\ConsoleUtilities\ConsoleUtilities.csproj", "{F11C678F-9FCC-4EB4-B7D7-3194A3D59CC6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookwalkerImport", "src\BookwalkerImport\BookwalkerImport.csproj", "{88F6EAF7-ED64-4693-AF13-D84583C9697E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +103,18 @@ Global
 		{F11C678F-9FCC-4EB4-B7D7-3194A3D59CC6}.Release|x64.Build.0 = Release|Any CPU
 		{F11C678F-9FCC-4EB4-B7D7-3194A3D59CC6}.Release|x86.ActiveCfg = Release|Any CPU
 		{F11C678F-9FCC-4EB4-B7D7-3194A3D59CC6}.Release|x86.Build.0 = Release|Any CPU
+		{88F6EAF7-ED64-4693-AF13-D84583C9697E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88F6EAF7-ED64-4693-AF13-D84583C9697E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88F6EAF7-ED64-4693-AF13-D84583C9697E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{88F6EAF7-ED64-4693-AF13-D84583C9697E}.Debug|x64.Build.0 = Debug|Any CPU
+		{88F6EAF7-ED64-4693-AF13-D84583C9697E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{88F6EAF7-ED64-4693-AF13-D84583C9697E}.Debug|x86.Build.0 = Debug|Any CPU
+		{88F6EAF7-ED64-4693-AF13-D84583C9697E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88F6EAF7-ED64-4693-AF13-D84583C9697E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88F6EAF7-ED64-4693-AF13-D84583C9697E}.Release|x64.ActiveCfg = Release|Any CPU
+		{88F6EAF7-ED64-4693-AF13-D84583C9697E}.Release|x64.Build.0 = Release|Any CPU
+		{88F6EAF7-ED64-4693-AF13-D84583C9697E}.Release|x86.ActiveCfg = Release|Any CPU
+		{88F6EAF7-ED64-4693-AF13-D84583C9697E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,6 +126,7 @@ Global
 		{753C5AA0-9B31-4BD8-BDBD-D749D43CA477} = {205334BE-1C02-4680-8BCC-8A2BAB36324A}
 		{B3CCF3D3-22C6-4828-B754-3219D022121E} = {205334BE-1C02-4680-8BCC-8A2BAB36324A}
 		{F11C678F-9FCC-4EB4-B7D7-3194A3D59CC6} = {205334BE-1C02-4680-8BCC-8A2BAB36324A}
+		{88F6EAF7-ED64-4693-AF13-D84583C9697E} = {205334BE-1C02-4680-8BCC-8A2BAB36324A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {11538667-809A-4C26-8F1D-FA7F458CA568}

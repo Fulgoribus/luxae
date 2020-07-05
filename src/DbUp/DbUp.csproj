@@ -9,9 +9,11 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Scripts\00000000000000_CreateIdentitySchema.sql" />
+    <None Remove="Scripts\00000000000001_BookImport.sql" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Scripts\00000000000000_CreateIdentitySchema.sql" />
+    <EmbeddedResource Include="Scripts\00000000000001_BookImport.sql" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="appsettings.json">
