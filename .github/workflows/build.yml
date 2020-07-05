@@ -41,10 +41,17 @@ jobs:
         # A file, directory or wildcard pattern that describes what to upload
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/dbup
     - name: Upload Web Build Artifact
-      if: ${{ false }} # ${{ github.event_name != 'pull_request' }}
+      if: ${{ github.event_name != 'pull_request' }}
       uses: actions/upload-artifact@v2
       with:
         # Artifact name
         name: web
         # A file, directory or wildcard pattern that describes what to upload
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/web
+    - name: 'Deploy to Azure WebApp'
+      if: ${{ github.event_name != 'pull_request' }}
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: Luxae-Dev
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/web

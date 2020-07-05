@@ -348,3 +348,8 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+## Luxae custom below this point
+
+# Lines 36/37 do not show a working way of blocking the wwwroot/lib folder.
+**/wwwroot/lib
