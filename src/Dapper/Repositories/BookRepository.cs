@@ -18,7 +18,7 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
         public async Task<Book?> GetBookByRetailerAsync(string retailerId, string retailerKey)
         {
             var sql = "SELECT b.* FROM BookRetailers br JOIN Books b ON b.BookId = br.BookId"
-                + $" WHERE br.RetailerId = @{nameof(retailerId)} AND br.RetailerId = @{nameof(retailerKey)}";
+                + $" WHERE br.RetailerId = @{nameof(retailerId)} AND br.RetailerKey = @{nameof(retailerKey)}";
             var cmd = new CommandDefinition(sql, new { retailerId, retailerKey });
             return await db.QuerySingleOrDefaultAsync<Book>(cmd);
         }

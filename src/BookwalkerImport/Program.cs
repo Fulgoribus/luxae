@@ -67,7 +67,7 @@ namespace Fulgoribus.Luxae.BookwalkerImport
                                 {
                                     Title = record.Title,
                                     ReleaseDate = record.ReleaseDate,
-                                    Series = record.Series,
+                                    Series = record.Series.ValueOrNull(),
                                     Label = record.Label
                                 };
                                 await bookRepo.SaveBookAsync(book);
