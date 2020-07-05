@@ -32,10 +32,20 @@ namespace Fulgoribus.Luxae.Web
             var googleOptions = Configuration.GetSection("Authentication:Google");
             if (googleOptions.Exists())
             {
-                authBuilder.AddGoogle(options =>
+                authBuilder.AddGoogle(configureOptions =>
                 {
-                    options.ClientId = googleOptions["ClientId"];
-                    options.ClientSecret = googleOptions["ClientSecret"];
+                    configureOptions.ClientId = googleOptions["ClientId"];
+                    configureOptions.ClientSecret = googleOptions["ClientSecret"];
+                });
+            }
+
+            var microsoftOptions = Configuration.GetSection("Authentication:Microsoft");
+            if (microsoftOptions.Exists())
+            {
+                authBuilder.AddMicrosoftAccount(configureOptions =>
+                {
+                    configureOptions.ClientId = microsoftOptions["ClientId"];
+                    configureOptions.ClientSecret = microsoftOptions["ClientSecret"];
                 });
             }
 
