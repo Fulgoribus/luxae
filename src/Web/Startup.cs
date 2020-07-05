@@ -62,16 +62,18 @@ namespace Fulgoribus.Luxae.Web
             }
 
             // Load our custom services *after* Microsoft's so that our services win.
+
+            // Bind options pattern classes.
+            services.Configure<SendGridOptions>(Configuration.GetSection(SendGridOptions.SectionName));
             services.Configure<TwoFactorAuthenticationOptions>(Configuration.GetSection(TwoFactorAuthenticationOptions.SectionName));
+
             // Need to use a lamba to resolve the SqlConnection because trying to bind by type was going off into setter injection land.
-            services.For<IDbConnection>().Use(ctx =>
-            {
-                var config = ctx.GetInstance<IConfiguration>();
-                return new SqlConnection(config.GetConnectionString("DefaultConnection"));
-            }).Scoped();
+            services.For<IDbConnection>().Use(_ => new SqlConnection(Configuration.GetConnectionString("DefaultConnection"))).Scoped();
+
+            // Load Lamar registries in our DLLs. (These are our preferred way of resolving things that are not part of the framework; but anything
+            // needing IConfiguration like above is more easily handled in this method.)
             services.Scan(s =>
             {
-                // Look for any registry in a DLL we built.
                 s.AssembliesFromApplicationBaseDirectory(f => f?.FullName?.StartsWith("Fulgoribus.", StringComparison.OrdinalIgnoreCase) ?? false);
 
                 s.LookForRegistries();
