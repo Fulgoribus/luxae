@@ -26,7 +26,20 @@ namespace Fulgoribus.Luxae.Web
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true);
             services.AddRazorPages();
 
-            // Load our custom services *after* Microsoft's so they win.
+            // Build authentication configuration. Can't use fluent syntax because we want to support running without configurations in place.
+            var authBuilder = services.AddAuthentication();
+
+            var googleOptions = Configuration.GetSection("Authentication:Google");
+            if (googleOptions.Exists())
+            {
+                authBuilder.AddGoogle(options =>
+                {
+                    options.ClientId = googleOptions["ClientId"];
+                    options.ClientSecret = googleOptions["ClientSecret"];
+                });
+            }
+
+            // Load our custom services *after* Microsoft's so that our services win.
             services.Configure<TwoFactorAuthenticationOptions>(Configuration.GetSection(TwoFactorAuthenticationOptions.SectionName));
             // Need to use a lamba to resolve the SqlConnection because trying to bind by type was going off into setter injection land.
             services.For<IDbConnection>().Use(ctx =>
