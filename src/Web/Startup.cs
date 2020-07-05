@@ -56,8 +56,7 @@ namespace Fulgoribus.Luxae.Web
                 {
                     configureOptions.ConsumerKey = twitterOptions["ConsumerKey"];
                     configureOptions.ConsumerSecret = twitterOptions["ConsumerSecret"];
-
-                    // Once we have our terms-of-service in place, set RetrieveUserDetails to true to get the email address too.
+                    configureOptions.RetrieveUserDetails = true;
                 });
             }
 
