@@ -49,6 +49,18 @@ namespace Fulgoribus.Luxae.Web
                 });
             }
 
+            var twitterOptions = Configuration.GetSection("Authentication:Twitter");
+            if (twitterOptions.Exists())
+            {
+                authBuilder.AddTwitter(configureOptions =>
+                {
+                    configureOptions.ConsumerKey = twitterOptions["ConsumerKey"];
+                    configureOptions.ConsumerSecret = twitterOptions["ConsumerSecret"];
+
+                    // Once we have our terms-of-service in place, set RetrieveUserDetails to true to get the email address too.
+                });
+            }
+
             // Load our custom services *after* Microsoft's so that our services win.
             services.Configure<TwoFactorAuthenticationOptions>(Configuration.GetSection(TwoFactorAuthenticationOptions.SectionName));
             // Need to use a lamba to resolve the SqlConnection because trying to bind by type was going off into setter injection land.

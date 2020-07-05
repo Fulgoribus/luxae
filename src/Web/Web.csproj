@@ -11,6 +11,7 @@
     <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="4.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="3.1.5" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="3.1.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Twitter" Version="3.1.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.5" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0" />
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.76" />
