@@ -2,7 +2,7 @@ name: Build solution
 
 on:
   push:
-    branches: [ master, azure-pipelines-integration ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
