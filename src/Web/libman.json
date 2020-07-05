@@ -26,9 +26,13 @@
       "destination": "wwwroot/lib/jquery-validation-unobtrusive/"
     },
     {
+      "library": "qrcodejs@1.0.0",
+      "destination": "wwwroot/lib/qrcodejs/"
+    },
+    {
       "library": "twitter-bootstrap@4.3.1",
       "destination": "wwwroot/lib/bootstrap/dist/"
-    },
-    
+    }
+
   ]
 }

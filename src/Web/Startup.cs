@@ -27,6 +27,7 @@ namespace Fulgoribus.Luxae.Web
             services.AddRazorPages();
 
             // Load our custom services *after* Microsoft's so they win.
+            services.Configure<TwoFactorAuthenticationOptions>(Configuration.GetSection(TwoFactorAuthenticationOptions.SectionName));
             // Need to use a lamba to resolve the SqlConnection because trying to bind by type was going off into setter injection land.
             services.For<IDbConnection>().Use(ctx =>
             {
