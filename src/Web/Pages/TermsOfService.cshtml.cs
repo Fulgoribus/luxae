@@ -2,9 +2,9 @@
 
 namespace Fulgoribus.Luxae.Web.Pages
 {
-    public class PrivacyModel : PageModel
+    public class TermsOfServiceModel : PageModel
     {
-        public PrivacyModel()
+        public TermsOfServiceModel()
         {
         }
 
