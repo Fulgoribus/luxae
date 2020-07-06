@@ -4,7 +4,7 @@ namespace Fulgoribus.Luxae.BookwalkerImport
 {
     public class BookwalkerBook
     {
-        public string? Title { get; set; }
+        public string Title { get; set; } = string.Empty;
         public string? Url { get; set; }
         public DateTime? ReleaseDate { get; set; }
         public string? Publisher { get; set; }

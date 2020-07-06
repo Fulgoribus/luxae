@@ -2,7 +2,7 @@
 {
     public static class ExtensionMethods
     {
-        public static string? ValueOrNull(this string? value) =>
+        public static string? GetValueOrNull(this string? value) =>
             string.IsNullOrWhiteSpace(value) || value == "――"
             ? null
             : value;
