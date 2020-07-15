@@ -17,6 +17,13 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
             this.db = db;
         }
 
+        public async Task<IEnumerable<Series>> GetAllSeriesAsync()
+        {
+            var sql = $"SELECT * FROM Series ORDER BY Title";
+            var cmd = new CommandDefinition(sql);
+            return await db.QueryAsync<Series>(cmd);
+        }
+
         public async Task<Book?> GetBookByRetailerAsync(string retailerId, string retailerKey)
         {
             var sql = "SELECT b.* FROM BookRetailers br JOIN Books b ON b.BookId = br.BookId"
@@ -34,9 +41,13 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
 
         public async Task<IEnumerable<SeriesBook>> GetSeriesBooksAsync(int seriesId)
         {
-            var sql = $"SELECT * FROM SeriesBooks WHERE SeriesId = @{nameof(seriesId)} ORDER BY SortOrder";
+            var sql = "SELECT * FROM SeriesBooks sb"
+                + " JOIN Series s ON s.SeriesId = sb.SeriesId"
+                + " JOIN Books b ON b.BookId = sb.BookId"
+                + $" WHERE sb.SeriesId = @{nameof(seriesId)}"
+                + " ORDER BY SortOrder";
             var cmd = new CommandDefinition(sql, new { seriesId });
-            return await db.QueryAsync<SeriesBook>(cmd);
+            return await db.QueryAsync<SeriesBook, Series, Book, SeriesBook>(cmd, (sb, s, b) => { sb.Series = s; sb.Book = b; return sb; }, "SeriesId,BookId");
         }
 
         public async Task SaveBookAsync(Book book)
