@@ -37,7 +37,7 @@ GO
 CREATE TABLE [dbo].[SeriesBooks](
     [SeriesId] [int] NOT NULL,
     [BookId] [int] NOT NULL,
-    [Volume] [nvarchar](10) NULL,
+    [Volume] [nvarchar](25) NULL,
     [SortOrder] DECIMAL(6,2) NOT NULL,
     CONSTRAINT [FK_SeriesBooks_Series] FOREIGN KEY ([SeriesId]) REFERENCES [dbo].[Series]([SeriesId]) ON DELETE CASCADE,
     CONSTRAINT [FK_SeriesBooks_Book] FOREIGN KEY ([BookId]) REFERENCES [dbo].[Books]([BookId]) ON DELETE CASCADE
