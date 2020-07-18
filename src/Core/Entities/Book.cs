@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Fulgoribus.Luxae.Entities
 {
@@ -9,6 +10,9 @@ namespace Fulgoribus.Luxae.Entities
         public string? Author { get; set; }
         public DateTime? ReleaseDate { get; set; }
         public string? Label { get; set; }
+        public bool HasCover { get; set; } = false;
+
+        public IEnumerable<SeriesBook> SeriesBooks { get; set; } = new SeriesBook[0];
 
         public static Book InvalidBook
         {

@@ -1,44 +1,16 @@
-﻿@page
+﻿@page "{bookId?}"
 @model Fulgoribus.Luxae.Web.Pages.Books.IndexModel
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = @Model.Book.Title;
 }
 
-<h1>Books</h1>
+<h1>@Model.Book.Title</h1>
 
-<div class="form-group">
-    <label asp-for="SeriesId">Series</label>
-    @Html.DropDownListFor(m => m.SeriesId, Model.Series, "Please select a series.", new { _class = "form-control" })
-</div>
+<h2>@Model.Book.Author</h2>
 
-@if(Model.Books.Any())
+@foreach (var series in Model.Book.SeriesBooks)
 {
-    @foreach (var book in Model.Books)
-    {
-        <div class="form-row">
-            <div class="col-2">
-                @book.Volume
-            </div>
-            <div class="col-6">
-                @book.Book.Title
-            </div>
-            <div class="col-4">
-                @book.Book.Author
-            </div>
-        </div>
-    }
+    <p>Volume @series.Volume in the <a href="@Url.Page("Series", new { SeriesId = series.Series!.SeriesId })">@series.Series.Title</a> series</p>
 }
 
-@section scripts
-{
-        <script type="text/javascript">
-        function setSeriesId(e)
-        {
-            var url = new URL(window.location.href);
-            url.searchParams.set("@Html.IdFor(m => m.SeriesId)", e.target.value);
-            window.location.href = url;
-        }
-
-        document.getElementById("@Html.IdFor(m => m.SeriesId)").addEventListener("change", setSeriesId);
-        </script>
-    }
+<img src="@Url.Action("Cover", "Books", new { Id = Model.Book.BookId })" style="max-width: 100%" />
