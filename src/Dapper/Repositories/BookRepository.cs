@@ -49,12 +49,15 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
 
         public async Task<IEnumerable<SeriesBook>> GetSeriesBooksAsync(int seriesId)
         {
-            var sql = "SELECT * FROM SeriesBooks sb"
+            var sql = "SELECT sb.*, s.*, b.*, CASE WHEN bc.BookId IS NULL THEN CAST(0 as bit) ELSE CAST(1 as bit) END AS HasCover"
+                + " FROM SeriesBooks sb"
                 + " JOIN Series s ON s.SeriesId = sb.SeriesId"
                 + " JOIN Books b ON b.BookId = sb.BookId"
+                + " JOIN BookCovers bc ON bc.BookId = sb.BookId"
                 + $" WHERE sb.SeriesId = @{nameof(seriesId)}"
                 + " ORDER BY SortOrder";
             var cmd = new CommandDefinition(sql, new { seriesId });
+
             return await db.QueryAsync<SeriesBook, Series, Book, SeriesBook>(cmd, (sb, s, b) => { sb.Series = s; sb.Book = b; return sb; }, "SeriesId,BookId");
         }
 

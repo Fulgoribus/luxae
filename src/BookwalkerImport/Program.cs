@@ -170,19 +170,18 @@ namespace Fulgoribus.Luxae.BookwalkerImport
                                             {
                                                 // Try using the URL as-is. Not as good as the full-fat cover but it will do.
                                                 var quotedUrl = matches.First().Value;
-                                                var url = quotedUrl.Substring(1, quotedUrl.Length - 2);
+                                                var url = quotedUrl[1..^1];
                                                 result = await client.GetAsync(url);
                                             }
                                             result.EnsureSuccessStatusCode();
                                             cover.Image = await result.Content.ReadAsByteArrayAsync();
+                                            cover.ContentType = result.Content.Headers.ContentType.ToString();
                                             await bookRepo.SaveBookCoverAsync(cover);
                                         }
                                     }
                                     catch (Exception e)
                                     {
                                         Console.WriteLine($"Error retrieving cover data for {record.Title} from {record.Url}");
-                                        // TODO Dev only
-                                        Console.WriteLine(e.ToString());
                                     }
                                 }
                             }

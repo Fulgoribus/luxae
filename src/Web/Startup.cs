@@ -103,6 +103,7 @@ namespace Fulgoribus.Luxae.Web
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapDefaultControllerRoute();
                 endpoints.MapRazorPages();
             });
         }
