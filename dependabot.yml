@@ -1,0 +1,17 @@
+version: 2
+updates:
+  # Enable version updates for .NET
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "17:00"
+      timezone: "America/Detroit"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "17:00"
+      timezone: "America/Detroit"
