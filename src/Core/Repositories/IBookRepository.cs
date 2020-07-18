@@ -8,6 +8,8 @@ namespace Fulgoribus.Luxae.Repositories
     {
         Task<IEnumerable<Series>> GetAllSeriesAsync();
 
+        Task<Book?> GetBookAsync(int bookId);
+
         Task<Book?> GetBookByRetailerAsync(string retailerId, string retailerKey);
 
         Task<BookCover?> GetBookCoverAsync(int bookId);

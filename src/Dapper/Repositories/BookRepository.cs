@@ -24,6 +24,25 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
             return await db.QueryAsync<Series>(cmd);
         }
 
+        public async Task<Book?> GetBookAsync(int bookId)
+        {
+            var sql = "SELECT * FROM Books b"
+                + $" WHERE b.BookId = @{nameof(bookId)}";
+            var cmd = new CommandDefinition(sql, new { bookId });
+            var result = await db.QuerySingleOrDefaultAsync<Book>(cmd);
+
+            if (result != null)
+            {
+                sql = "SELECT * FROM SeriesBooks sb"
+                    + " JOIN Series s ON s.SeriesId = sb.SeriesId"
+                    + $" WHERE sb.BookId = @{nameof(bookId)}";
+                cmd = new CommandDefinition(sql, new { bookId });
+                result.SeriesBooks = await db.QueryAsync<SeriesBook, Series, SeriesBook>(cmd, (sb, s) => { sb.Series = s; return sb; }, "SeriesId");
+            }
+
+            return result;
+        }
+
         public async Task<Book?> GetBookByRetailerAsync(string retailerId, string retailerKey)
         {
             var sql = "SELECT b.* FROM BookRetailers br JOIN Books b ON b.BookId = br.BookId"
