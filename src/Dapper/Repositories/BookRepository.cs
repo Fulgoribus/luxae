@@ -32,6 +32,14 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
             return await db.QuerySingleOrDefaultAsync<Book>(cmd);
         }
 
+        public async Task<BookCover?> GetBookCoverAsync(int bookId)
+        {
+            var sql = "SELECT * FROM BookCovers bc"
+                + $" WHERE bc.BookId = @{nameof(bookId)}";
+            var cmd = new CommandDefinition(sql, new { bookId });
+            return await db.QuerySingleOrDefaultAsync<BookCover>(cmd);
+        }
+
         public async Task<Series?> GetSeriesAsync(string title)
         {
             var sql = $"SELECT * FROM Series WHERE Title = @{nameof(title)}";
@@ -57,11 +65,20 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
                 throw new NotImplementedException("Updating books is not yet implemented.");
             }
 
-            var sql = $" INSERT INTO Books ([Title], [Author], [ReleaseDate], [Label])"
-                + $" OUTPUT INSERTED.BookId"
+            var sql = "INSERT INTO Books ([Title], [Author], [ReleaseDate], [Label])"
+                + " OUTPUT INSERTED.BookId"
                 + $" VALUES (@{nameof(book.Title)}, @{nameof(book.Author)}, @{nameof(book.ReleaseDate)}, @{nameof(book.Label)})";
             var cmd = new CommandDefinition(sql, book);
             book.BookId = await db.QuerySingleAsync<int>(cmd);
+        }
+
+        public async Task SaveBookCoverAsync(BookCover cover)
+        {
+            var sql = $"IF EXISTS (SELECT * FROM BookCovers WHERE BookId = @{nameof(cover.BookId)})"
+                + $" UPDATE BookCovers SET Image = @{nameof(cover.Image)} WHERE BookId = @{nameof(cover.BookId)}"
+                + $" ELSE INSERT INTO BookCovers (BookId, Image) VALUES (@{nameof(cover.BookId)}, @{nameof(cover.Image)})";
+            var cmd = new CommandDefinition(sql, cover);
+            await db.ExecuteAsync(cmd);
         }
 
         public async Task SaveBookRetailerAsync(BookRetailer bookRetailer)
