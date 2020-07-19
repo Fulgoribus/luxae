@@ -6,7 +6,20 @@
 
 <h1>@Model.Book.Title</h1>
 
-<h2>@Model.Book.Author</h2>
+@if (Model.Book.Authors.Any())
+{
+    <h2>Written by @Model.Book.AuthorDisplay</h2>
+}
+
+@if (Model.Book.Illustrators.Any())
+{
+    <h2>Illustrated by @Model.Book.IllustratorDisplay</h2>
+}
+
+@if (Model.Book.Translators.Any())
+{
+    <h2>Translated by @Model.Book.TranslatorDisplay</h2>
+}
 
 @foreach (var series in Model.Book.SeriesBooks)
 {
