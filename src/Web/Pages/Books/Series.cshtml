@@ -5,50 +5,33 @@
 }
 
 <h1>@(Model.Series?.Title ?? "Series")</h1>
+@if (Model.Series != null && Model.Series.Authors.Any())
+{
+    <h2>written by @Model.Series.AuthorDisplay</h2>
+}
 
 <div class="form-group">
     <label asp-for="SeriesId">Series</label>
     @Html.DropDownListFor(m => m.SeriesId, Model.AllSeries, "Please select a series.", new { _class = "form-control" })
 </div>
 
-@foreach (var book in Model.Books)
+@for (int x = 0; x < (Model.Books.Count / Model.VolumesPerRow) + 1; x++)
 {
     <div class="form-row">
-        <div class="col-1">
-            @book.Volume
-        </div>
-        <div class="col-2">
-            @if (book.Book.HasCover)
-            {
-                <img src="@Url.Action("Cover", "Books", new { Id = book.Book.BookId })" style="max-width: 100%" data-toggle="modal" data-target="@("#cover" + book.Book.BookId)" />
-        }
-        </div>
-        <div class="col-6">
-            <a href="@Url.Page("Index", new { BookId = book.Book.BookId })">@book.Book.Title</a>
-        </div>
-        <div class="col-3">
-            @book.Book.AuthorDisplay
-        </div>
-    </div>
+        @{var target = Math.Min(Model.VolumesPerRow * (x + 1), Model.Books.Count);}
+        @for (int y = Model.VolumesPerRow * x; y < Math.Min(Model.VolumesPerRow * (x + 1), Model.Books.Count); y++)
+        {
+            var book = Model.Books[y];
 
-    @if (book.Book.HasCover)
-    {
-        <div class="modal fade" id="@("cover" + book.Book.BookId)" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5>@book.Book.Title</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <img src="@Url.Action("Cover", "Books", new { Id = book.Book.BookId })" style="max-width: 100%" />
-                    </div>
-                </div>
+            <div class="col-2">
+                @if (book.Book.HasCover)
+                {
+                    <img src="@Url.Action("Cover", "Books", new { Id = book.Book.BookId })" style="max-width: 100%" data-toggle="modal" data-target="@("#cover" + book.Book.BookId)" />
+                }
+                <a href="@Url.Page("Index", new { BookId = book.Book.BookId })">@book.Volume</a>
             </div>
-        </div>
-    }
+        }
+    </div>
 }
 
 @section scripts

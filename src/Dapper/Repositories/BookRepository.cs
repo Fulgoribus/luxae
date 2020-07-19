@@ -34,9 +34,25 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
 
         public async Task<IEnumerable<Series>> GetAllSeriesAsync()
         {
-            var sql = $"SELECT * FROM Series ORDER BY Title";
+            var sql = $"SELECT s.*, p.* FROM Series s"
+                + " LEFT JOIN SeriesAuthors sa ON sa.SeriesId = s.SeriesId"
+                + " LEFT JOIN People p ON p.PersonId = sa.PersonId"
+                + " ORDER BY Title";
             var cmd = new CommandDefinition(sql);
-            return await db.QueryAsync<Series>(cmd);
+
+            var authors = new Dictionary<int, List<Person>>();
+            return await db.QueryAsync<Series, Person, Series>(cmd, (s, p) =>
+            {
+                if (!authors.ContainsKey(s.SeriesId!.Value))
+                {
+                    authors[s.SeriesId!.Value] = new List<Person>();
+                }
+                authors[s.SeriesId!.Value].Add(p);
+
+                s.Authors = authors[s.SeriesId!.Value];
+
+                return s;
+            }, "SeriesId,PersonId");
         }
 
         public async Task<Book?> GetBookAsync(int bookId, IPrincipal user)

@@ -11,12 +11,14 @@ namespace Fulgoribus.Luxae.Web.Pages.Books
 {
     public class SeriesModel : PageModel
     {
-        public IEnumerable<SeriesBook> Books { get; set; } = new List<SeriesBook>();
+        public IList<SeriesBook> Books { get; set; } = new List<SeriesBook>();
 
         [BindProperty(SupportsGet = true)]
         public int? SeriesId { get; set; }
 
         public Series? Series { get; set; }
+
+        public int VolumesPerRow => 6;
 
         public IEnumerable<SelectListItem> AllSeries { get; set; } = new List<SelectListItem>();
 
@@ -37,7 +39,7 @@ namespace Fulgoribus.Luxae.Web.Pages.Books
             if (SeriesId.HasValue)
             {
                 var seriesBooks = await bookRepository.GetSeriesBooksAsync(SeriesId.Value);
-                Books = seriesBooks.OrderBy(s => s.SortOrder);
+                Books = seriesBooks.OrderBy(s => s.SortOrder).ToList();
                 Series = seriesBooks.FirstOrDefault()?.Series;
             }
         }
