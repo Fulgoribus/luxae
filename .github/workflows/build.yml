@@ -2,7 +2,7 @@ name: Build solution
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, 'series-layout-improvements' ]
   pull_request:
     branches: [ master ]
 
@@ -33,7 +33,7 @@ jobs:
       if: ${{ github.event_name != 'pull_request' }}
       run: dotnet publish src/Web/Web.csproj --configuration Release --no-build --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/web
     - name: Upload DbUp Build Artifact
-      if: ${{ false }} # ${{ github.event_name != 'pull_request' }}
+      if: ${{ github.event_name != 'pull_request' }}
       uses: actions/upload-artifact@v2
       with:
         # Artifact name
@@ -48,6 +48,11 @@ jobs:
         name: web
         # A file, directory or wildcard pattern that describes what to upload
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/web
+    - name: 'Deploy Database'
+      if: ${{ github.event_name != 'pull_request' }}
+      run: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/dbup/Fulgoribus.Luxae.DbUp
+      env:
+        ConnectionStrings__DefaultConnection: ${{ secrets.LUXAE_DB_CONNECTION_STRING }}
     - name: 'Deploy to Azure WebApp'
       if: ${{ github.event_name != 'pull_request' }}
       uses: azure/webapps-deploy@v2
