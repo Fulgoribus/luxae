@@ -115,9 +115,9 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
                 + " FROM SeriesBooks sb"
                 + " JOIN Series s ON s.SeriesId = sb.SeriesId"
                 + " JOIN Books b ON b.BookId = sb.BookId"
-                + " JOIN BookCovers bc ON bc.BookId = sb.BookId"
-                + " JOIN BookAuthors ba ON ba.BookId = sb.BookId"
-                + " JOIN People p ON p.PersonId = ba.PersonId"
+                + " LEFT JOIN BookCovers bc ON bc.BookId = sb.BookId"
+                + " LEFT JOIN BookAuthors ba ON ba.BookId = sb.BookId"
+                + " LEFT JOIN People p ON p.PersonId = ba.PersonId"
                 + $" WHERE sb.SeriesId = @{nameof(seriesId)}"
                 + " ORDER BY SortOrder";
             var cmd = new CommandDefinition(sql, new { seriesId });
@@ -149,9 +149,9 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
                 + " ISNULL(ba.Name, p.Name) AS Name"
                 + " FROM UserBooks ub"
                 + " JOIN Books b ON b.BookId = ub.BookId"
-                + " JOIN BookCovers bc ON bc.BookId = ub.BookId"
-                + " JOIN BookAuthors ba ON ba.BookId = ub.BookId"
-                + " JOIN People p ON p.PersonId = ba.PersonId"
+                + " LEFT JOIN BookCovers bc ON bc.BookId = ub.BookId"
+                + " LEFT JOIN BookAuthors ba ON ba.BookId = ub.BookId"
+                + " LEFT JOIN People p ON p.PersonId = ba.PersonId"
                 + $" WHERE ub.UserId = @{nameof(userId)}"
                 + " ORDER BY SortOrder";
             var cmd = new CommandDefinition(sql, new { userId });
