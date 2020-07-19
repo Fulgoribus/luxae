@@ -13,7 +13,10 @@ namespace Fulgoribus.Luxae.Web.Controllers
             this.bookRepository = bookRepository;
         }
 
-        //[Route("{controller}/{action}/{bookId}")]
+        /// <remarks>
+        /// Tell the browser to cache images for 1 day.
+        /// </remarks>
+        [ResponseCache(Duration = 60 * 24, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> Cover(int id)
         {
             var cover = await bookRepository.GetBookCoverAsync(id);
