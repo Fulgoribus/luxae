@@ -11,6 +11,7 @@ namespace Fulgoribus.Luxae.Entities
         public DateTime? ReleaseDate { get; set; }
         public string? Label { get; set; }
         public bool HasCover { get; set; } = false;
+        public bool HasBook { get; set; } = false;
 
         public string AuthorDisplay => GetPersonText(Authors);
         public string IllustratorDisplay => GetPersonText(Illustrators);
@@ -31,7 +32,7 @@ namespace Fulgoribus.Luxae.Entities
             {
                 if (isFirst)
                 {
-                    result.Append("");
+                    result.Append(", ");
                 }
                 else
                 {

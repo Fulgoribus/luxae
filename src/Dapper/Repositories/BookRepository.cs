@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using Dapper;
 using Fulgoribus.Luxae.Entities;
@@ -17,6 +18,20 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
             this.db = db;
         }
 
+        public async Task AddToCollection(int bookId, IPrincipal user)
+        {
+            var userId = user.GetUserId();
+
+            if (userId != null)
+            {
+                var sql = $"IF NOT EXISTS (SELECT * FROM UserBooks WHERE UserId = @{nameof(userId)} AND BookId = @{nameof(bookId)})"
+                    + " INSERT INTO UserBooks (UserId, BookId)"
+                    + $" VALUES (@{nameof(userId)}, @{nameof(bookId)})";
+                var cmd = new CommandDefinition(sql, new { bookId, userId });
+                await db.ExecuteAsync(cmd);
+            }
+        }
+
         public async Task<IEnumerable<Series>> GetAllSeriesAsync()
         {
             var sql = $"SELECT * FROM Series ORDER BY Title";
@@ -24,11 +39,15 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
             return await db.QueryAsync<Series>(cmd);
         }
 
-        public async Task<Book?> GetBookAsync(int bookId)
+        public async Task<Book?> GetBookAsync(int bookId, IPrincipal user)
         {
-            var sql = "SELECT * FROM Books b"
+            var userId = user.GetUserId();
+
+            var sql = "SELECT b.*, CASE WHEN ub.UserId IS NULL THEN CAST(0 as bit) ELSE CAST(1 as bit) END AS HasBook"
+                + " FROM Books b"
+                + $" LEFT JOIN UserBooks ub ON ub.BookId = b.BookId AND ub.UserId = @{nameof(userId)}"
                 + $" WHERE b.BookId = @{nameof(bookId)}";
-            var cmd = new CommandDefinition(sql, new { bookId });
+            var cmd = new CommandDefinition(sql, new { bookId, userId });
             var result = await db.QuerySingleOrDefaultAsync<Book>(cmd);
 
             if (result != null)
@@ -118,6 +137,18 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
 
                 return sb;
             }, "SeriesId,BookId,PersonId");
+        }
+
+        public async Task RemoveFromCollection(int bookId, IPrincipal user)
+        {
+            var userId = user.GetUserId();
+
+            if (userId != null)
+            {
+                var sql = $"DELETE FROM UserBooks WHERE UserId = @{nameof(userId)} AND BookId = @{nameof(bookId)}";
+                var cmd = new CommandDefinition(sql, new { bookId, userId });
+                await db.ExecuteAsync(cmd);
+            }
         }
 
         public async Task SaveBookAsync(Book book)

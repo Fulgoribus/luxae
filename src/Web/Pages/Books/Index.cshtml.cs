@@ -24,12 +24,44 @@ namespace Fulgoribus.Luxae.Web.Pages.Books
         {
             if (BookId.HasValue)
             {
-                Book = await bookRepository.GetBookAsync(BookId.Value) ?? new Book();
+                Book = await bookRepository.GetBookAsync(BookId.Value, User) ?? new Book();
             }
 
             return Book.IsValid
                 ? (IActionResult)Page()
                 : NotFound();
+        }
+
+        public async Task<IActionResult> OnPostAdd()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Forbid();
+            }
+            else if (!BookId.HasValue)
+            {
+                return BadRequest();
+            }
+
+            await bookRepository.AddToCollection(BookId.Value, User);
+
+            return RedirectToPage();
+        }
+
+        public async Task<IActionResult> OnPostRemove()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Forbid();
+            }
+            else if (!BookId.HasValue)
+            {
+                return BadRequest();
+            }
+
+            await bookRepository.RemoveFromCollection(BookId.Value, User);
+
+            return RedirectToPage();
         }
     }
 }
