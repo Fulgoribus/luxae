@@ -21,6 +21,8 @@ namespace Fulgoribus.Luxae.Repositories
 
         Task<IEnumerable<SeriesBook>> GetSeriesBooksAsync(int seriesId);
 
+        Task<IEnumerable<Book>> GetUserBooksAsync(IPrincipal user);
+
         Task RemoveFromCollection(int bookId, IPrincipal user);
 
         Task SaveBookAsync(Book book);

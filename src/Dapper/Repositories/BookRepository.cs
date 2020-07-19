@@ -139,6 +139,38 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
             }, "SeriesId,BookId,PersonId");
         }
 
+        public async Task<IEnumerable<Book>> GetUserBooksAsync(IPrincipal user)
+        {
+            var userId = user.GetUserId();
+
+            var sql = "SELECT b.*,"
+                + " CASE WHEN bc.BookId IS NULL THEN CAST(0 as bit) ELSE CAST(1 as bit) END AS HasCover,"
+                + " ba.PersonId,"
+                + " ISNULL(ba.Name, p.Name) AS Name"
+                + " FROM UserBooks ub"
+                + " JOIN Books b ON b.BookId = ub.BookId"
+                + " JOIN BookCovers bc ON bc.BookId = ub.BookId"
+                + " JOIN BookAuthors ba ON ba.BookId = ub.BookId"
+                + " JOIN People p ON p.PersonId = ba.PersonId"
+                + $" WHERE ub.UserId = @{nameof(userId)}"
+                + " ORDER BY SortOrder";
+            var cmd = new CommandDefinition(sql, new { userId });
+
+            var authors = new Dictionary<int, List<Person>>();
+            return await db.QueryAsync<Book, Person, Book>(cmd, (b, p) =>
+            {
+                if (!authors.ContainsKey(b.BookId!.Value))
+                {
+                    authors[b.BookId!.Value] = new List<Person>();
+                }
+                authors[b.BookId!.Value].Add(p);
+
+                b.Authors = authors[b.BookId!.Value];
+
+                return b;
+            }, "BookId,PersonId");
+        }
+
         public async Task RemoveFromCollection(int bookId, IPrincipal user)
         {
             var userId = user.GetUserId();
