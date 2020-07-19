@@ -179,7 +179,7 @@ namespace Fulgoribus.Luxae.BookwalkerImport
                                             await bookRepo.SaveBookCoverAsync(cover);
                                         }
                                     }
-                                    catch (Exception e)
+                                    catch (Exception)
                                     {
                                         Console.WriteLine($"Error retrieving cover data for {record.Title} from {record.Url}");
                                     }
