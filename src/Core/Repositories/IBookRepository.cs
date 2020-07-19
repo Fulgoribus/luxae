@@ -15,7 +15,7 @@ namespace Fulgoribus.Luxae.Repositories
 
         Task<Book?> GetBookByRetailerAsync(string retailerId, string retailerKey);
 
-        Task<BookCover?> GetBookCoverAsync(int bookId);
+        Task<BookCover?> GetBookCoverAsync(int bookId, bool isFullResolution);
 
         Task<Series?> GetSeriesAsync(string title);
 

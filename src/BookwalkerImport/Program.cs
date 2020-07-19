@@ -45,6 +45,7 @@ namespace Fulgoribus.Luxae.BookwalkerImport
             var bookRepo = container.GetInstance<IBookRepository>();
             var regexVolume = new Regex("[0-9]+[0-9.]*", RegexOptions.Compiled);
             var regexCover = new Regex(@"""https:\/\/c\.bookwalker\.jp\/([0-9]+)\/.*\.jpg""", RegexOptions.Compiled);
+            var regexCoverSmall = new Regex(@"""https:\/\/rimg\.bookwalker\.jp\/([0-9]+)\/.*\.jpg""", RegexOptions.Compiled);
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             var httpClientFactory = container.GetInstance<IHttpClientFactory>();
@@ -149,7 +150,8 @@ namespace Fulgoribus.Luxae.BookwalkerImport
 
                             if (book.BookId.HasValue)
                             {
-                                var cover = await bookRepo.GetBookCoverAsync(book.BookId.Value);
+                                string? body = null;
+                                var cover = await bookRepo.GetBookCoverAsync(book.BookId.Value, false);
                                 if (cover == null)
                                 {
                                     cover = new BookCover
@@ -160,7 +162,41 @@ namespace Fulgoribus.Luxae.BookwalkerImport
                                     try
                                     {
                                         var client = httpClientFactory.CreateClient();
-                                        var body = await client.GetStringAsync(record.Url);
+                                        body = await client.GetStringAsync(record.Url);
+                                        var matches = regexCoverSmall.Matches(body);
+                                        if (matches.Any() && int.TryParse(new string(matches.First().Groups[1].Value.Reverse().ToArray()), out var id))
+                                        {
+                                            // Use the URL as-is.
+                                            var quotedUrl = matches.First().Value;
+                                            var url = quotedUrl[1..^1];
+                                            var result = await client.GetAsync(url);
+                                            cover.Image = await result.Content.ReadAsByteArrayAsync();
+                                            cover.ContentType = result.Content.Headers.ContentType.ToString();
+                                            cover.IsFullResolution = false;
+                                            await bookRepo.SaveBookCoverAsync(cover);
+                                        }
+                                    }
+                                    catch (Exception)
+                                    {
+                                        Console.WriteLine($"Error retrieving cover data for {record.Title} from {record.Url}");
+                                    }
+                                }
+
+                                cover = await bookRepo.GetBookCoverAsync(book.BookId.Value, true);
+                                if (cover == null)
+                                {
+                                    cover = new BookCover
+                                    {
+                                        BookId = book.BookId.Value
+                                    };
+
+                                    try
+                                    {
+                                        var client = httpClientFactory.CreateClient();
+                                        if (body == null)
+                                        {
+                                            body = await client.GetStringAsync(record.Url);
+                                        }
                                         var matches = regexCover.Matches(body);
                                         if (matches.Any() && int.TryParse(new string(matches.First().Groups[1].Value.Reverse().ToArray()), out var id))
                                         {
@@ -176,6 +212,7 @@ namespace Fulgoribus.Luxae.BookwalkerImport
                                             result.EnsureSuccessStatusCode();
                                             cover.Image = await result.Content.ReadAsByteArrayAsync();
                                             cover.ContentType = result.Content.Headers.ContentType.ToString();
+                                            cover.IsFullResolution = true;
                                             await bookRepo.SaveBookCoverAsync(cover);
                                         }
                                     }

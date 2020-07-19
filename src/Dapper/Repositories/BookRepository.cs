@@ -107,11 +107,12 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
             return await db.QuerySingleOrDefaultAsync<Book>(cmd);
         }
 
-        public async Task<BookCover?> GetBookCoverAsync(int bookId)
+        public async Task<BookCover?> GetBookCoverAsync(int bookId, bool isFullResolution)
         {
             var sql = "SELECT * FROM BookCovers bc"
-                + $" WHERE bc.BookId = @{nameof(bookId)}";
-            var cmd = new CommandDefinition(sql, new { bookId });
+                + $" WHERE bc.BookId = @{nameof(bookId)}"
+                + $" AND bc.IsFullResolution = @{nameof(isFullResolution)}";
+            var cmd = new CommandDefinition(sql, new { bookId, isFullResolution });
             return await db.QuerySingleOrDefaultAsync<BookCover>(cmd);
         }
 
@@ -215,9 +216,11 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
 
         public async Task SaveBookCoverAsync(BookCover cover)
         {
-            var sql = $"IF EXISTS (SELECT * FROM BookCovers WHERE BookId = @{nameof(cover.BookId)})"
-                + $" UPDATE BookCovers SET Image = @{nameof(cover.Image)} WHERE BookId = @{nameof(cover.BookId)}"
-                + $" ELSE INSERT INTO BookCovers (BookId, Image) VALUES (@{nameof(cover.BookId)}, @{nameof(cover.Image)})";
+            var sql = $"IF EXISTS (SELECT * FROM BookCovers WHERE BookId = @{nameof(cover.BookId)} AND IsFullResolution = @{nameof(cover.IsFullResolution)})"
+                    + $" UPDATE BookCovers SET Image = @{nameof(cover.Image)}, ContentType = @{nameof(cover.ContentType)}"
+                    + $" WHERE BookId = @{nameof(cover.BookId)} AND IsFullResolution = @{nameof(cover.IsFullResolution)}"
+                + " ELSE INSERT INTO BookCovers (BookId, Image, ContentType, IsFullResolution)"
+                    + $" VALUES (@{nameof(cover.BookId)}, @{nameof(cover.Image)}, @{nameof(cover.ContentType)}, @{nameof(cover.IsFullResolution)})";
             var cmd = new CommandDefinition(sql, cover);
             await db.ExecuteAsync(cmd);
         }

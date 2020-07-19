@@ -14,9 +14,11 @@
     <None Remove="Scripts\00000000000003_MetadataAdds.sql" />
     <None Remove="Scripts\00000000000004_UserBooks.sql" />
     <None Remove="Scripts\00000000000005_SeriesAuthor.sql" />
+    <None Remove="Scripts\00000000000006_SmallerCovers.sql" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Scripts\00000000000000_CreateIdentitySchema.sql" />
+    <EmbeddedResource Include="Scripts\00000000000006_SmallerCovers.sql" />
     <EmbeddedResource Include="Scripts\00000000000005_SeriesAuthor.sql" />
     <EmbeddedResource Include="Scripts\00000000000004_UserBooks.sql" />
     <EmbeddedResource Include="Scripts\00000000000003_MetadataAdds.sql" />
