@@ -5,6 +5,6 @@ namespace Fulgoribus.Luxae.Web.Pages
 {
     public class IndexModel : PageModel
     {
-        public IActionResult OnGet() => RedirectToPage("Books/Index");
+        public IActionResult OnGet() => RedirectToPage("Books/Series");
     }
 }

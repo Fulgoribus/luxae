@@ -11,7 +11,7 @@ namespace Fulgoribus.Luxae.Web.Pages.Books
         [BindProperty(SupportsGet = true)]
         public int? BookId { get; set; }
 
-        public Book Book { get; set; } = Book.InvalidBook;
+        public Book Book { get; set; } = new Book();
 
         private readonly IBookRepository bookRepository;
 
@@ -24,15 +24,44 @@ namespace Fulgoribus.Luxae.Web.Pages.Books
         {
             if (BookId.HasValue)
             {
-                Book = await bookRepository.GetBookAsync(BookId.Value) ?? Book.InvalidBook;
+                Book = await bookRepository.GetBookAsync(BookId.Value, User) ?? new Book();
             }
 
-            if (this.Book == Book.InvalidBook)
+            return Book.IsValid
+                ? (IActionResult)Page()
+                : NotFound();
+        }
+
+        public async Task<IActionResult> OnPostAdd()
+        {
+            if (!User.Identity.IsAuthenticated)
             {
-                return NotFound();
+                return Forbid();
+            }
+            else if (!BookId.HasValue)
+            {
+                return BadRequest();
             }
 
-            return Page();
+            await bookRepository.AddToCollection(BookId.Value, User);
+
+            return RedirectToPage();
+        }
+
+        public async Task<IActionResult> OnPostRemove()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Forbid();
+            }
+            else if (!BookId.HasValue)
+            {
+                return BadRequest();
+            }
+
+            await bookRepository.RemoveFromCollection(BookId.Value, User);
+
+            return RedirectToPage();
         }
     }
 }

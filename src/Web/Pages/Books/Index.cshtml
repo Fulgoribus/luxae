@@ -4,13 +4,68 @@
     ViewData["Title"] = @Model.Book.Title;
 }
 
-<h1>@Model.Book.Title</h1>
+<div class="row">
+    <div class="col-8">
+        <h1>@Model.Book.Title</h1>
+    </div>
+    @if (User.Identity.IsAuthenticated)
+    {
+    <div class="col-4 text-right">
+        @if (Model.Book.HasBook)
+        {
+            <form asp-page-handler="remove" method="post">
+                <button type="submit" class="btn btn-secondary">Remove From Collection</button>
+            </form>
+        }
+        else
+        {
+            <form asp-page-handler="add" method="post">
+                <button type="submit" class="btn btn-primary">Add to Collection</button>
+            </form>
+        }
+    </div>
+    }
+</div>
 
-<h2>@Model.Book.Author</h2>
+
+@if (Model.Book.Authors.Any())
+{
+    <div class="row">
+        <div class="col">
+            <h2>Written by @Model.Book.AuthorDisplay</h2>
+        </div>
+    </div>
+}
+
+@if (Model.Book.Illustrators.Any())
+{
+    <div class="row">
+        <div class="col">
+            <h2>Illustrated by @Model.Book.IllustratorDisplay</h2>
+        </div>
+    </div>
+}
+
+@if (Model.Book.Translators.Any())
+{
+    <div class="row">
+        <div class="col">
+            <h2>Translated by @Model.Book.TranslatorDisplay</h2>
+        </div>
+    </div>
+}
 
 @foreach (var series in Model.Book.SeriesBooks)
 {
-    <p>Volume @series.Volume in the <a href="@Url.Page("Series", new { SeriesId = series.Series!.SeriesId })">@series.Series.Title</a> series</p>
+    <div class="row">
+        <div class="col">
+            Volume @series.Volume in the <a href="@Url.Page("Series", new { SeriesId = series.Series!.SeriesId })">@series.Series.Title</a> series
+        </div>
+    </div>
 }
 
-<img src="@Url.Action("Cover", "Books", new { Id = Model.Book.BookId })" style="max-width: 100%" />
+<div class="row">
+    <div class="col">
+        <img src="@Url.Action("Cover", "Books", new { Id = Model.Book.BookId })" style="max-width: 100%" />
+    </div>
+</div>
