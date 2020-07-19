@@ -35,7 +35,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <img src="@Url.Action("Cover", "Books", new { Id = book.BookId })" style="max-width: 100%" />
+                        <img src="@Url.Action("Cover", "Books", new { Id = book.BookId, IsFullResolution = false })" style="max-width: 100%" />
                     </div>
                 </div>
             </div>
