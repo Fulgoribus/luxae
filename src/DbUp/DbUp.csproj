@@ -15,9 +15,13 @@
     <None Remove="Scripts\00000000000004_UserBooks.sql" />
     <None Remove="Scripts\00000000000005_SeriesAuthor.sql" />
     <None Remove="Scripts\00000000000006_SmallerCovers.sql" />
+    <None Remove="Scripts\00000000000007_LanguageSpecificTables.sql" />
+    <None Remove="Scripts\00000000000008_LanguageSpecificViews.sql" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Scripts\00000000000000_CreateIdentitySchema.sql" />
+    <EmbeddedResource Include="Scripts\00000000000008_LanguageSpecificViews.sql" />
+    <EmbeddedResource Include="Scripts\00000000000007_LanguageSpecificTables.sql" />
     <EmbeddedResource Include="Scripts\00000000000006_SmallerCovers.sql" />
     <EmbeddedResource Include="Scripts\00000000000005_SeriesAuthor.sql" />
     <EmbeddedResource Include="Scripts\00000000000004_UserBooks.sql" />

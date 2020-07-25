@@ -99,7 +99,7 @@ namespace Fulgoribus.Luxae.BookwalkerImport
                                     decimal? sortOrder = null;
                                     var titleForParsing = book.Title.Replace(seriesTitle, string.Empty);
                                     var volumeCandidates = regexVolume.Matches(titleForParsing);
-                                    var books = await bookRepo.GetSeriesBooksAsync(series.SeriesId!.Value);
+                                    var books = await bookRepo.GetSeriesBooksAsync(series.SeriesId!.Value, "en-US");
                                     if (volumeCandidates.Any())
                                     {
                                         // Take the first one.

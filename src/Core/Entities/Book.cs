@@ -6,6 +6,7 @@ namespace Fulgoribus.Luxae.Entities
     public class Book
     {
         public int? BookId { get; set; }
+        public int? ReleaseId { get; set; }
         public string? Title { get; set; }
         public DateTime? ReleaseDate { get; set; }
         public string? Label { get; set; }

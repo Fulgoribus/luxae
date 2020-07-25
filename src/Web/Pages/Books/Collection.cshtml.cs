@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Fulgoribus.Luxae.Entities;
 using Fulgoribus.Luxae.Repositories;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -25,7 +26,8 @@ namespace Fulgoribus.Luxae.Web.Pages.Books
                 return Forbid();
             }
 
-            Books = await bookRepository.GetUserBooksAsync(User);
+            var cultureFeature = Request.HttpContext.Features.Get<IRequestCultureFeature>();
+            Books = await bookRepository.GetUserBooksAsync(cultureFeature.RequestCulture.UICulture.ToString(), User);
 
             return Page();
         }

@@ -55,15 +55,15 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
             }, "SeriesId,PersonId");
         }
 
-        public async Task<Book?> GetBookAsync(int bookId, IPrincipal user)
+        public async Task<Book?> GetBookAsync(int bookId, string cultureCode, IPrincipal user)
         {
             var userId = user.GetUserId();
 
             var sql = "SELECT b.*, CASE WHEN ub.UserId IS NULL THEN CAST(0 as bit) ELSE CAST(1 as bit) END AS HasBook"
-                + " FROM Books b"
+                + " FROM BooksByCulture b"
                 + $" LEFT JOIN UserBooks ub ON ub.BookId = b.BookId AND ub.UserId = @{nameof(userId)}"
-                + $" WHERE b.BookId = @{nameof(bookId)}";
-            var cmd = new CommandDefinition(sql, new { bookId, userId });
+                + $" WHERE b.BookId = @{nameof(bookId)} AND b.CultureCode = @{nameof(cultureCode)}";
+            var cmd = new CommandDefinition(sql, new { bookId, cultureCode, userId });
             var result = await db.QuerySingleOrDefaultAsync<Book>(cmd);
 
             if (result != null)
@@ -84,9 +84,9 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
 
                 sql = "SELECT ISNULL(bt.Name, p.Name) AS Name, bt.RoleDesc FROM BookTranslators bt"
                     + " JOIN People p ON p.PersonId = bt.PersonId"
-                    + $" WHERE bt.BookId = @{nameof(bookId)}"
+                    + $" WHERE bt.ReleaseId = @{nameof(result.ReleaseId)}"
                     + " ORDER BY bt.SortOrder";
-                cmd = new CommandDefinition(sql, new { bookId });
+                cmd = new CommandDefinition(sql, result);
                 result.Translators = await db.QueryAsync<Person>(cmd);
 
                 sql = "SELECT * FROM SeriesBooks sb"
@@ -107,12 +107,12 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
             return await db.QuerySingleOrDefaultAsync<Book>(cmd);
         }
 
-        public async Task<BookCover?> GetBookCoverAsync(int bookId, bool isFullResolution)
+        public async Task<BookCover?> GetBookCoverAsync(int releaseId, bool isFullResolution)
         {
             var sql = "SELECT * FROM BookCovers bc"
-                + $" WHERE bc.BookId = @{nameof(bookId)}"
+                + $" WHERE bc.ReleaseId = @{nameof(releaseId)}"
                 + $" AND bc.IsFullResolution = @{nameof(isFullResolution)}";
-            var cmd = new CommandDefinition(sql, new { bookId, isFullResolution });
+            var cmd = new CommandDefinition(sql, new { releaseId, isFullResolution });
             return await db.QuerySingleOrDefaultAsync<BookCover>(cmd);
         }
 
@@ -123,21 +123,21 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
             return await db.QuerySingleOrDefaultAsync<Series>(cmd);
         }
 
-        public async Task<IEnumerable<SeriesBook>> GetSeriesBooksAsync(int seriesId)
+        public async Task<IEnumerable<SeriesBook>> GetSeriesBooksAsync(int seriesId, string cultureCode)
         {
             var sql = "SELECT sb.*, s.*, b.*,"
-                + " CASE WHEN bc.BookId IS NULL THEN CAST(0 as bit) ELSE CAST(1 as bit) END AS HasCover,"
+                + " CASE WHEN bc.ReleaseId IS NULL THEN CAST(0 as bit) ELSE CAST(1 as bit) END AS HasCover,"
                 + " ba.PersonId,"
                 + " ISNULL(ba.Name, p.Name) AS Name"
                 + " FROM SeriesBooks sb"
                 + " JOIN Series s ON s.SeriesId = sb.SeriesId"
-                + " JOIN Books b ON b.BookId = sb.BookId"
-                + " LEFT JOIN BookCovers bc ON bc.BookId = sb.BookId AND bc.IsFullResolution = 0"
+                + " JOIN BooksByCulture b ON b.BookId = sb.BookId"
+                + " LEFT JOIN BookCovers bc ON bc.ReleaseId = b.ReleaseId AND bc.IsFullResolution = 0"
                 + " LEFT JOIN BookAuthors ba ON ba.BookId = sb.BookId"
                 + " LEFT JOIN People p ON p.PersonId = ba.PersonId"
-                + $" WHERE sb.SeriesId = @{nameof(seriesId)}"
+                + $" WHERE sb.SeriesId = @{nameof(seriesId)} AND b.CultureCode = @{nameof(cultureCode)}"
                 + " ORDER BY SortOrder";
-            var cmd = new CommandDefinition(sql, new { seriesId });
+            var cmd = new CommandDefinition(sql, new { seriesId, cultureCode });
 
             var authors = new Dictionary<int, List<Person>>();
             return await db.QueryAsync<SeriesBook, Series, Book, Person, SeriesBook>(cmd, (sb, s, b, p) =>
@@ -156,22 +156,22 @@ namespace Fulgoribus.Luxae.Dapper.Repositories
             }, "SeriesId,BookId,PersonId");
         }
 
-        public async Task<IEnumerable<Book>> GetUserBooksAsync(IPrincipal user)
+        public async Task<IEnumerable<Book>> GetUserBooksAsync(string cultureCode, IPrincipal user)
         {
             var userId = user.GetUserId();
 
             var sql = "SELECT b.*,"
-                + " CASE WHEN bc.BookId IS NULL THEN CAST(0 as bit) ELSE CAST(1 as bit) END AS HasCover,"
+                + " CASE WHEN bc.ReleaseId IS NULL THEN CAST(0 as bit) ELSE CAST(1 as bit) END AS HasCover,"
                 + " ba.PersonId,"
                 + " ISNULL(ba.Name, p.Name) AS Name"
                 + " FROM UserBooks ub"
-                + " JOIN Books b ON b.BookId = ub.BookId"
-                + " LEFT JOIN BookCovers bc ON bc.BookId = ub.BookId AND bc.IsFullResolution = 0"
+                + " JOIN BooksByCulture b ON b.BookId = ub.BookId"
+                + " LEFT JOIN BookCovers bc ON bc.ReleaseId = b.ReleaseId AND bc.IsFullResolution = 0"
                 + " LEFT JOIN BookAuthors ba ON ba.BookId = ub.BookId"
                 + " LEFT JOIN People p ON p.PersonId = ba.PersonId"
-                + $" WHERE ub.UserId = @{nameof(userId)}"
+                + $" WHERE ub.UserId = @{nameof(userId)} AND b.CultureCode = @{nameof(cultureCode)}"
                 + " ORDER BY SortOrder";
-            var cmd = new CommandDefinition(sql, new { userId });
+            var cmd = new CommandDefinition(sql, new { cultureCode, userId });
 
             var authors = new Dictionary<int, List<Person>>();
             return await db.QueryAsync<Book, Person, Book>(cmd, (b, p) =>

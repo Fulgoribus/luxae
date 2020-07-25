@@ -1,13 +1,16 @@
 using System;
 using System.Data;
+using System.Globalization;
 using Lamar;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace Fulgoribus.Luxae.Web
 {
@@ -66,6 +69,27 @@ namespace Fulgoribus.Luxae.Web
             services.Configure<SendGridOptions>(Configuration.GetSection(SendGridOptions.SectionName));
             services.Configure<TwoFactorAuthenticationOptions>(Configuration.GetSection(TwoFactorAuthenticationOptions.SectionName));
 
+            // Configure supported cultures and localization options
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                // We don't actually have UI support for other cultures yet, but this lets us use the current user's culture in queries without hardcoding en-US everywhere.
+                var supportedCultures = new[]
+                {
+                    new CultureInfo("en-US")
+                };
+
+                // State what the default culture for your application is. This will be used if no specific culture
+                // can be determined for a given request.
+                options.DefaultRequestCulture = new RequestCulture(culture: "en-US", uiCulture: "en-US");
+
+                // You must explicitly state which cultures your application supports.
+                // These are the cultures the app supports for formatting numbers, dates, etc.
+                options.SupportedCultures = supportedCultures;
+
+                // These are the cultures the app supports for UI strings, i.e. we have localized resources for.
+                options.SupportedUICultures = supportedCultures;
+            });
+
             // Need to use a lamba to resolve the SqlConnection because trying to bind by type was going off into setter injection land.
             services.For<IDbConnection>().Use(_ => new SqlConnection(Configuration.GetConnectionString("DefaultConnection"))).Scoped();
 
@@ -100,6 +124,9 @@ namespace Fulgoribus.Luxae.Web
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            var localizationOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(localizationOptions.Value);
 
             app.UseEndpoints(endpoints =>
             {

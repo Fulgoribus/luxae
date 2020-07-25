@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Fulgoribus.Luxae.Entities;
 using Fulgoribus.Luxae.Repositories;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -38,7 +39,8 @@ namespace Fulgoribus.Luxae.Web.Pages.Books
 
             if (SeriesId.HasValue)
             {
-                var seriesBooks = await bookRepository.GetSeriesBooksAsync(SeriesId.Value);
+                var cultureFeature = Request.HttpContext.Features.Get<IRequestCultureFeature>();
+                var seriesBooks = await bookRepository.GetSeriesBooksAsync(SeriesId.Value, cultureFeature.RequestCulture.UICulture.ToString());
                 Books = seriesBooks.OrderBy(s => s.SortOrder).ToList();
                 Series = seriesBooks.FirstOrDefault()?.Series;
             }

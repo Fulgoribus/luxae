@@ -17,15 +17,15 @@ namespace Fulgoribus.Luxae.Web.Controllers
         /// Tell the browser to cache images for 1 day.
         /// </remarks>
         [ResponseCache(Duration = 60 * 24, Location = ResponseCacheLocation.Client)]
-        [Route("{controller}/{action}/{id?}/{isFullResolution?}")]
-        public async Task<IActionResult> Cover(int id, bool isFullResolution = false)
+        [Route("{controller}/{action}/{releaseId?}/{isFullResolution?}")]
+        public async Task<IActionResult> Cover(int releaseId, bool isFullResolution = false)
         {
-            var cover = await bookRepository.GetBookCoverAsync(id, isFullResolution);
+            var cover = await bookRepository.GetBookCoverAsync(releaseId, isFullResolution);
 
             if (cover == null)
             {
                 return isFullResolution
-                    ? await Cover(id, false)
+                    ? await Cover(releaseId, false)
                     : NotFound();
             }
 
